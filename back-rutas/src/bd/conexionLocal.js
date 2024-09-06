@@ -1,19 +1,12 @@
 const sql = require("mssql");
-// const CryptoJS = require('crypto-js')
-const envConfig = require("../configuracion/entorno");
-const EventLogger = require("node-windows").EventLogger;
-let log = new EventLogger("Adquisicion");
+const { config } = require("dotenv");
+config();
 
-// const passDesencriptada = () => {
-//     let decrypted = CryptoJS.AES.decrypt(envConfig.passwordSQL, process.env.SECURE_KEY_SECRET);
-//     return decrypted.toString(CryptoJS.enc.Utf8);
-// }
-
-const config = {
-  user: envConfig.usuarioSQL,
-  password: /* passDesencriptada(), */ envConfig.passwordSQL,
-  server: envConfig.servidorSQL,
-  database: envConfig.baseDatosSQL,
+const configuracion = {
+  user: process.env.SQLUSER,
+  password: process.env.SQLPASS,
+  server: process.env.SQLSERVER,
+  database: process.env.SQLDB,
   options: {
     encrypt: false,
     trustServerCertificate: true,
@@ -23,7 +16,7 @@ const config = {
 
 module.exports = async () => {
   try {
-    return new sql.ConnectionPool(config).connect();
+    return new sql.ConnectionPool(configuracion).connect();
   } catch (e) {
     console.error(e);
     log.error(e);
