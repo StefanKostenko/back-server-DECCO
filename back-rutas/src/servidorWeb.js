@@ -4,6 +4,7 @@ const http = require("http");
 const routes = require("./rutas");
 const cors = require("cors");
 
+const port = process.env.PORT || 5554;
 class WebServer {
   static async _inicializar() {
     const app = express();
@@ -25,7 +26,7 @@ class WebServer {
 
     // routes
     app.use(cors());
-    app.use(routes);
+    app.use("/api", routes);
 
     // satic files
     app.use(express.static(path.join(__dirname, "public")));
@@ -34,8 +35,8 @@ class WebServer {
     const server = http.createServer(app);
 
     // bootstraping the app
-    server.listen(3000, "0.0.0.0", () =>
-      console.log("Servidor Web en el puerto 3000")
+    server.listen(port, "0.0.0.0", () =>
+      console.log(`Servidor Web en el puerto ${port}`)
     );
 
     return { server, app };
