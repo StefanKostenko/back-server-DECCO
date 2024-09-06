@@ -1,4 +1,5 @@
 const { conectarBD, consultas } = require("../bd");
+const sql = require("mssql");
 // var CryptoJS = require("crypto-js");
 
 // const jwt = require('jsonwebtoken');
@@ -9,15 +10,19 @@ module.exports = {
       const { usuario, password } = req.body;
       console.log(req.body);
       const pool = await conectarBD();
-      const consultaUsuario = consultas.usuarios.login(usuario, password);
-      const datosUsuario = (await pool.request().query(consultaUsuario))
-        .recordset;
-      if (datosUsuario) {
-        // let accessToken = jwt.sign(datosUsuario[0], process.env.JSONWEBTOKENS_SECRET);
-        // datosUsuario[0].token = accessToken;
-        let clienteIDs = datosUsuario.map((row) => row.clienteID);
-        // eslint-disable-next-line node/no-unsupported-features/es-syntax
-        let usuarioData = { ...datosUsuario[0], clienteID: clienteIDs };
+      
+      // Obtén la consulta con los placeholders
+      const consultaUsuario = consultas.usuarios.login();
+  
+      // Ejecuta la consulta usando parámetros en lugar de concatenar
+      const datosUsuario = await pool.request()
+        .input('usuario', sql.VarChar, usuario)  // Asignar el valor del parámetro 'usuario'
+        .input('password', sql.VarChar, password)  // Asignar el valor del parámetro 'password'
+        .query(consultaUsuario);  // Ejecuta la consulta
+  
+      if (datosUsuario.recordset.length > 0) {
+        let clienteIDs = datosUsuario.recordset.map((row) => row.clienteID);
+        let usuarioData = { ...datosUsuario.recordset[0], clienteID: clienteIDs };
         console.log(usuarioData);
         res.send(usuarioData);
       } else {

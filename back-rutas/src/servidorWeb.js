@@ -34,8 +34,8 @@ class WebServer {
     const server = http.createServer(app);
 
     // bootstraping the app
-    server.listen(3002, "0.0.0.0", () =>
-      console.log("Servidor Web en el puerto 3002")
+    server.listen(3000, "0.0.0.0", () =>
+      console.log("Servidor Web en el puerto 3000")
     );
 
     return { server, app };

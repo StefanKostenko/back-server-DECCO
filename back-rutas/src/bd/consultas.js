@@ -276,15 +276,15 @@ module.exports = {
     login: (usuario, password) => {
       return `
                 SELECT 
-                    U.id,
-                    U.usuario,
-                    U.nombre,
-                    U.rol,
-                    US.clienteID
+                  U.id,
+                  U.usuario,
+                  U.nombre,
+                  U.rol,
+                  US.clienteID
                 FROM [CONFIGURACION].[dbo].[USUARIOS] AS U
                 INNER JOIN [CONFIGURACION].[dbo].[USUARIOS_CLIENTES] AS US
                   ON U.id = US.usuarioID
-                WHERE [usuario] = '${usuario}' AND [password] = '${password}'
+                WHERE U.usuario = @usuario AND U.password = @password
             `;
     },
 
